@@ -1,6 +1,7 @@
 # Installation
 
 ```
+git clone git@github.com:christinasaran/gif.git
 cd gif
 npm install
 ```
