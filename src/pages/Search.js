@@ -1,8 +1,9 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { FaArrowCircleUp } from 'react-icons/fa';
+
 import { Grid } from '@giphy/react-components';
 import { GiphyFetch } from '@giphy/js-fetch-api';
 import ResizeObserver from 'react-resize-observer';
-
-import React, { useState, useEffect, useRef } from 'react';
 
 const webSDKKey = 'zOGifukXKpOJH4XuptyPEfhFJWVtFP5g';
 const gf = new GiphyFetch(webSDKKey);
@@ -13,7 +14,8 @@ const gf = new GiphyFetch(webSDKKey);
 function Home() {
   const [alert, setAlert] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
-  const [keyword, setKeyword] = useState('cute');
+  const [keyword, setKeyword] = useState('puppy');
+  const [showScroll, setShowScroll] = useState(false);
 
   const inputRef = useRef(null);
   const fetchGifs = (offset) => gf.search(keyword, { offset, limit: 10 });
@@ -29,6 +31,18 @@ function Home() {
   function handleFocus() {
     inputRef.current.select();
   }
+
+  const checkScrollTop = () => {
+    if (!showScroll && window.pageYOffset > 400) {
+      setShowScroll(true);
+    } else if (showScroll && window.pageYOffset <= 400) {
+      setShowScroll(false);
+    }
+  };
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  window.addEventListener('scroll', checkScrollTop);
 
   return (
     <>
@@ -62,13 +76,29 @@ function Home() {
             e.preventDefault();
           }}
         />
-        {alert && <p className='alert'> copied to clipboard</p>}
+        {alert && (
+          <p
+            className='alert'
+            // style={{
+            // top: `${coordinate.x - 100}px`,
+            // left: `${coordinate.y - 100}px`,
+            //   }}
+          >
+            copied to clipboard
+          </p>
+        )}
         <ResizeObserver
           onResize={({ width }) => {
             setWidth(width);
           }}
         />
       </div>
+
+      <FaArrowCircleUp
+        className='scrollTop'
+        onClick={scrollTop}
+        style={{ height: 100, display: showScroll ? 'flex' : 'none' }}
+      />
     </>
   );
 }
